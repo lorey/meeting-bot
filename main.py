@@ -5,7 +5,6 @@ from telegram.ext import Updater, CommandHandler, Filters
 
 import config
 import meetingbot
-import telegram.bot as telegram
 
 
 class State(object):
