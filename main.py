@@ -6,6 +6,8 @@ from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
 
 import config
 import meetingbot
+import TelegramBot.bot as telegram
+import GoogleCalendar.calendar as gcal
 
 
 class State(object):
