@@ -3,6 +3,7 @@ import datetime
 import config
 import meetingbot
 import TelegramBot.bot as telegram
+import GoogleCalendar.calendar as gcal
 
 
 def main():
