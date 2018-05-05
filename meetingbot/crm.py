@@ -1,6 +1,14 @@
 import requests
 
 
+class PseudoCRM(object):
+    def find_contact_by_email(self, email):
+        print('Searching contact: %s'% email)
+
+    def push_note(self, email, note):
+        print('Note for %s: %s' % (email, note))
+
+
 class Hubspot(object):
     api_key = None
 

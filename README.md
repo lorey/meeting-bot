@@ -1,5 +1,7 @@
 # Meeting Bot
 
+Telegram username: Hackathon_Meeting_Bot
+
 ## Installation
 
 ```
