@@ -20,7 +20,8 @@ def setup(telegram_id):
 def next_meeeting():
     service = setup(telegram_id=1234)
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time 
-    nextMin = datetime.datetime.utcnow() + datetime.timedelta(0,61) # nextMin is used for timeMax, which is exclusive
+    next_min = datetime.datetime.utcnow() + datetime.timedelta(0,61) # nextMin is used for timeMax, which is exclusive
+    nextMin = next_meeeting.isoformat() + 'Z'
     events_result = service.events().list(calendarId='primary', timeMin=now, timeMax=nextMin,      
                                         singleEvents=True,
                                         orderBy='startTime').execute()
