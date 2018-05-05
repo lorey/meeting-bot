@@ -1,6 +1,7 @@
 import datetime
 import logging
 
+import telegram
 from telegram.ext import Updater, CommandHandler, Filters
 
 import config
@@ -15,17 +16,17 @@ class State(object):
 
     def __init__(self, updater, crm):
         self._updater = updater
-        self._contexts = []
+        self._contexts = {}
         self._crm = crm
         self._users = {}
 
-    def start(self):
+    def start(self, bot: telegram.Bot, update: telegram.Update):
         print('Start')
 
-    def help(self):
+    def help(self, bot: telegram.Bot, update: telegram.Update):
         print('Help')
 
-    def receive(self):
+    def receive(self, bot: telegram.Bot, update: telegram.Update):
         print('Receive')
 
 
