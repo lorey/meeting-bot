@@ -1,9 +1,11 @@
 from __future__ import print_function
-from apiclient.discovery import build
+
+import datetime
+
+from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
-import datetime
-import json
+
 
 # Setup the Calendar API
 def setup(telegram_id):
@@ -17,6 +19,7 @@ def setup(telegram_id):
 
     return service
 
+
 def next_meeeting(timeDeltaInSeconds=61):
     service = setup(telegram_id=1234)
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time 
@@ -27,6 +30,7 @@ def next_meeeting(timeDeltaInSeconds=61):
                                         orderBy='startTime').execute()
 
     return events_result[0]
+
 
 def main():
     # Call the Calendar API
@@ -54,3 +58,4 @@ def main():
     #             end = event['end'].get('dateTime', event['end'].get('date'))
 
     #             print(attendees, start, end)
+    pass
