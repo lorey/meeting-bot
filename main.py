@@ -63,7 +63,7 @@ class State(object):
 
 
 def main():
-    calendar.setup(123)
+    calendar.setup(1234)
 
     #
     # Start telegram bot
