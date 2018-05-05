@@ -13,6 +13,7 @@ class State(object):
     _updater = None
     _crm = None
     _event = None
+    _chat_id = None
 
     def __init__(self, updater, crm):
         self._updater = updater
@@ -21,6 +22,7 @@ class State(object):
 
     def start(self, bot: telegram.Bot, update: telegram.Update):
         print('User %s has started the bot' % update.effective_user)
+        self._chat_id = update.message.chat_id
 
     def help(self, bot: telegram.Bot, update: telegram.Update):
         print('User %s needs help' % update.effective_user)
@@ -41,11 +43,11 @@ class State(object):
         if event and event['attendees']:
             event_name = event['summary']
             text = 'Your last event was "%s". Please enter your notes:' % event_name
-            bot.send_message(chat_id=config.DEBUG_CHAT_ID, text=text)
+            bot.send_message(chat_id=self._chat_id, text=text)
 
     def receive(self, bot, update: telegram.Update):
         if not self._event:
-            bot.send_message(chat_id=config.DEBUG_CHAT_ID, text='No event set')
+            bot.send_message(chat_id=self._chat_id, text='No event set')
             return
 
         event = self._event
@@ -56,7 +58,7 @@ class State(object):
         message = update.message
 
         self._crm.push_note(email, message.text)
-        bot.send_message(chat_id=config.DEBUG_CHAT_ID, text='Your note on "%s" has been saved at %s.' % (event_name, email))
+        bot.send_message(chat_id=self._chat_id, text='Your note on "%s" has been saved at %s.' % (event_name, email))
 
         # unset event to avoid errors
         self._event = None
