@@ -5,13 +5,12 @@ import TelegramBot.bot as telegram
 
 def main():
     print('I\'m a bot')
-    h = meetingbot.crm.Hubspot(config.HUBSPOT_API_KEY)
+    h = meetingbot.crm.PseudoCRM()
 
     email = input('Email:')
     note = input('Note:')
     result = h.push_note(email, note)
     print(result)
-
 
     # Start telegram bot
     updater = telegram.main()
