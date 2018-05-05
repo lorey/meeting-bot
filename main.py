@@ -21,13 +21,13 @@ class State(object):
         self._users = {}
 
     def start(self, bot: telegram.Bot, update: telegram.Update):
-        print('Start')
+        print('User %s has started the bot' % update.effective_user)
 
     def help(self, bot: telegram.Bot, update: telegram.Update):
-        print('Help')
+        print('User %s needs help' % update.effective_user)
 
     def receive(self, bot: telegram.Bot, update: telegram.Update):
-        print('Receive')
+        print('User %s has sent something' % update.effective_user)
 
 
 def main():
