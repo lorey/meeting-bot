@@ -10,15 +10,11 @@ import meetingbot
 
 class State(object):
     _updater = None
-    _contexts = None
     _crm = None
-    _users = None  # telegram id => data
 
     def __init__(self, updater, crm):
         self._updater = updater
-        self._contexts = {}
         self._crm = crm
-        self._users = {}
 
     def start(self, bot: telegram.Bot, update: telegram.Update):
         print('User %s has started the bot' % update.effective_user)
@@ -26,8 +22,11 @@ class State(object):
     def help(self, bot: telegram.Bot, update: telegram.Update):
         print('User %s needs help' % update.effective_user)
 
-    def receive(self, bot: telegram.Bot, update: telegram.Update):
-        print('User %s has sent something' % update.effective_user)
+    def log(self, bot: telegram.Bot, update: telegram.Update):
+        print('User %s wants to log' % update.effective_user)
+        email = ''
+        note = ''
+        self._crm.push_note(email, note)
 
 
 def main():
@@ -45,7 +44,7 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", state.start))
     dp.add_handler(CommandHandler("help", state.help))
-    dp.add_handler(MessageHandler(Filters.all, state.receive))
+    dp.add_handler(CommandHandler('log', state.log))
 
     # log all errors
     dp.add_error_handler(error)
