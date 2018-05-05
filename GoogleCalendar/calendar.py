@@ -17,10 +17,10 @@ def setup(telegram_id):
 
     return service
 
-def next_meeeting():
+def next_meeeting(timeDeltaInSeconds=61):
     service = setup(telegram_id=1234)
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time 
-    next_min = datetime.datetime.utcnow() + datetime.timedelta(0,61) # nextMin is used for timeMax, which is exclusive
+    next_min = datetime.datetime.utcnow() + datetime.timedelta(0,timeDeltaInSeconds) # nextMin is used for timeMax, which is exclusive
     nextMin = next_min.isoformat() + 'Z'
     events_result = service.events().list(calendarId='primary', timeMin=now, timeMax=nextMin,      
                                         singleEvents=True,
