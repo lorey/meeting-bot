@@ -4,7 +4,7 @@ import logging
 import TelegramBot.bot as telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-import calendar
+import googlecalendar
 import config
 import meetingbot
 
@@ -38,7 +38,7 @@ class State(object):
         # todo fetch events
         # todo check if event is ending within next minute
         # todo open new dialogue that asks if you want to create a note
-        event = calendar.next_meeeting()
+        event = googlecalendar.next_meeeting()
 
         if event and event['attendees']:
             event_name = event['summary']
@@ -65,7 +65,7 @@ class State(object):
 
 
 def main():
-    calendar.setup(1234)
+    googlecalendar.setup(1234)
 
     #
     # Start telegram bot
