@@ -6,31 +6,39 @@ from oauth2client import file, client, tools
 
 
 # Setup the Calendar API
-def setup(telegram_id):
+def setup():
     SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
-    store = file.Storage('credentials_' + telegram_id +'.json')
+    store = file.Storage('data/credentials/google_calendar.json')
     creds = store.get()
     if not creds or creds.invalid:
-        flow = client.flow_from_clientsecrets('client_secret.json', SCOPES)
+        flow = client.flow_from_clientsecrets('data/credentials/client_secret.json', SCOPES)
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
 
     return service
 
 
-def next_meeeting(timeDeltaInSeconds=61):
-    service = setup(telegram_id=1234)
-    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time 
-    next_min = datetime.datetime.utcnow() + datetime.timedelta(0,timeDeltaInSeconds) # nextMin is used for timeMax, which is exclusive
-    nextMin = next_min.isoformat() + 'Z'
-    events_result = service.events().list(calendarId='primary', timeMin=now, timeMax=nextMin,      
-                                        singleEvents=True,
-                                        orderBy='startTime').execute()
+def next_meeeting(within_seconds=61):
+    # call setup if needed
+    service = setup()
 
-    return events_result[0]
+    now_str = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+    next_min = datetime.datetime.utcnow() + datetime.timedelta(seconds=within_seconds + 1)  # nextMin is used for timeMax, which is exclusive
+    next_min_str = next_min.isoformat() + 'Z'
+
+    events_result = service.events().list(
+        calendarId='primary',
+        timeMin=now_str,
+        timeMax=next_min_str,
+        singleEvents=True,
+        orderBy='startTime').execute()
+
+    next_events = events_result['items']
+    return next_events[0]
 
 
 def main():
+    print(next_meeeting(100000))
     # Call the Calendar API
     # service = setup(telegram_id=1234)
     # next_meeeting(service)
@@ -57,3 +65,7 @@ def main():
 
     #             print(attendees, start, end)
     pass
+
+
+if __name__ == '__main__':
+    main()

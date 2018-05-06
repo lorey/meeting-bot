@@ -65,7 +65,7 @@ class State(object):
 
 
 def main():
-    googlecalendar.setup(1234)
+    googlecalendar.setup()
 
     #
     # Start telegram bot
