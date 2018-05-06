@@ -1,10 +1,10 @@
 import datetime
 import logging
 
-import TelegramBot.bot as telegram
+# import TelegramBot.bot as telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-import calendar
+import calendarg
 import config
 import meetingbot
 
@@ -20,14 +20,14 @@ class State(object):
         self._crm = crm
         self._event = None
 
-    def start(self, bot: telegram.Bot, update: telegram.Update):
+    def start(self, bot, update):
         print('User %s has started the bot' % update.effective_user)
         self._chat_id = update.message.chat_id
 
-    def help(self, bot: telegram.Bot, update: telegram.Update):
+    def help(self, bot, update):
         print('User %s needs help' % update.effective_user)
 
-    def log(self, bot: telegram.Bot, update: telegram.Update):
+    def log(self, bot, update):
         print('User %s wants to log' % update.effective_user)
         email = ''
         note = ''
@@ -38,14 +38,14 @@ class State(object):
         # todo fetch events
         # todo check if event is ending within next minute
         # todo open new dialogue that asks if you want to create a note
-        event = calendar.next_meeeting()
-
+        event = calendarg.next_meeeting(200)
+        
         if event and event['attendees']:
             event_name = event['summary']
             text = 'Your last event was "%s". Please enter your notes:' % event_name
             bot.send_message(chat_id=self._chat_id, text=text)
 
-    def receive(self, bot, update: telegram.Update):
+    def receive(self, bot, update):
         if not self._event:
             bot.send_message(chat_id=self._chat_id, text='No event set')
             return
@@ -65,7 +65,7 @@ class State(object):
 
 
 def main():
-    calendar.setup(1234)
+    calendarg.setup(1234)
 
     #
     # Start telegram bot
@@ -92,13 +92,12 @@ def main():
 
     bot = updater.bot
 
-    # Keep the process alive
-    updater.idle()
-
     # schedule calendar checks
-    interval = datetime.timedelta(seconds=60)
+    interval = datetime.timedelta(seconds=20)
     updater.job_queue.run_repeating(state.meeting_notifier, interval, first=0)
 
+    # Keep the process alive
+    updater.idle()
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""

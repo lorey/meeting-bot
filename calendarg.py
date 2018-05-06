@@ -3,12 +3,13 @@ import datetime
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
+import json
 
 
 # Setup the Calendar API
 def setup(telegram_id):
     SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
-    store = file.Storage('credentials_' + telegram_id +'.json')
+    store = file.Storage('credentials.json')
     creds = store.get()
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets('client_secret.json', SCOPES)
@@ -20,14 +21,18 @@ def setup(telegram_id):
 
 def next_meeeting(timeDeltaInSeconds=61):
     service = setup(telegram_id=1234)
+
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time 
-    next_min = datetime.datetime.utcnow() + datetime.timedelta(0,timeDeltaInSeconds) # nextMin is used for timeMax, which is exclusive
-    nextMin = next_min.isoformat() + 'Z'
-    events_result = service.events().list(calendarId='primary', timeMin=now, timeMax=nextMin,      
+    # next_min = datetime.datetime.utcnow() + datetime.timedelta(,timeDeltaInSeconds) # nextMin is used for timeMax, which is exclusive
+    # nextMin = next_min.isoformat() + 'Z'
+    events_result = service.events().list(calendarId='primary', timeMin=now, maxResults=1,
                                         singleEvents=True,
                                         orderBy='startTime').execute()
 
-    return events_result[0]
+
+    events = events_result.get('items', [])
+    
+    return events[0]
 
 
 def main():
