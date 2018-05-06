@@ -34,7 +34,9 @@ def next_meeeting(within_seconds=61):
         orderBy='startTime').execute()
 
     next_events = events_result['items']
-    return next_events[0]
+    if next_events:
+        return next_events[0]
+    return None
 
 
 def main():

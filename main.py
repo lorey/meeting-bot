@@ -1,12 +1,14 @@
 import datetime
 import logging
 
-import TelegramBot.bot as telegram
+import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-import googlecalendar
 import config
+import googlecalendar
 import meetingbot
+
+CALENDAR_CHECK_INTERVAL = 60
 
 
 class State(object):
@@ -40,10 +42,13 @@ class State(object):
         # todo open new dialogue that asks if you want to create a note
         event = googlecalendar.next_meeeting()
 
-        if event and event['attendees']:
-            event_name = event['summary']
-            text = 'Your last event was "%s". Please enter your notes:' % event_name
-            bot.send_message(chat_id=self._chat_id, text=text)
+        if event and self._chat_id:
+            if 'attendees' in event:
+                event_name = event['summary']
+                text = 'Your last event was "%s". Please enter your notes:' % event_name
+                bot.send_message(chat_id=self._chat_id, text=text)
+            else:
+                logging.info('Skipping event without attendees: %s' % event)
 
     def receive(self, bot, update: telegram.Update):
         if not self._event:
@@ -65,6 +70,7 @@ class State(object):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     googlecalendar.setup()
 
     #
@@ -92,12 +98,12 @@ def main():
 
     bot = updater.bot
 
+    # schedule calendar checks
+    interval = datetime.timedelta(seconds=CALENDAR_CHECK_INTERVAL)
+    updater.job_queue.run_repeating(state.meeting_notifier, interval, first=0)
+
     # Keep the process alive
     updater.idle()
-
-    # schedule calendar checks
-    interval = datetime.timedelta(seconds=60)
-    updater.job_queue.run_repeating(state.meeting_notifier, interval, first=0)
 
 
 def error(bot, update, error):
